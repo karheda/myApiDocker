@@ -1,3 +1,5 @@
 application/
 mysql/mysqldump
+nginx/logs
+mysql/lib
 .DS_Store
