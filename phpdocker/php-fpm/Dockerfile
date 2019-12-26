@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install selected extensions and other stuff
 RUN apt-get update \
-  && docker-php-ext-install pdo_mysql mysqli mbstring
+  && docker-php-ext-install pdo_mysql mysqli mbstring exif
 
 RUN apt-get update \
   && apt-get install -y libmemcached-dev zlib1g-dev libpng-dev jpegoptim optipng libmagickwand-dev \

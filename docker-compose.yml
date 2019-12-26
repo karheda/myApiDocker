@@ -4,63 +4,67 @@
 version: "3"
 services:
 
-    #memcached:
-    #  image: memcached:alpine
-    #  container_name: negoapi-memcached
-    #  ports:
-    #    - "11212:11211"
-    #  command: [memcached]
-    #  networks: 
-    #    - negonet
+    memcached:
+      image: memcached:alpine
+      container_name: negoapi-memcached
+      ports:
+        - "11212:11211"
+      command: [memcached]
+      networks: 
+        - negonet
 
     mysql:
       image: mysql:5.7.28
       container_name: negoapi-mysql
+      command: --default-authentication-plugin=mysql_native_password
       volumes:
         - ./mysql/lib:/var/lib/mysql
+        - ./mysql/mysqldump:/docker-entrypoint-initdb.d
       environment:
-        - MYSQL_ROOT_PASSWORD=root
-        - MYSQL_DATABASE=negoservices
-        - MYSQL_USER=nego
-        - MYSQL_PASSWORD=nego
-      command: [mysqld, --explicit_defaults_for_timestamp=1, --max_allowed_packet=256M]
+        MYSQL_ROOT_PASSWORD: skyw4lk3r
+        MYSQL_DATABASE: negoservices
+        MYSQL_USER: nego
+        MYSQL_PASSWORD: nego
+      ports:
+        - "9002:3306"
+      command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_general_ci, --skip-character-set-client-handshake, --default-storage-engine=INNODB, --max_allowed_packet=256M, --innodb_log_file_size=2GB, --transaction-isolation=READ-COMMITTED, --binlog_format=row]
       networks: 
         - negonet
 
-    #mailcatcher:
-    #  image: yappabe/mailcatcher
-    #  ports:
-    #      - 1025:1025
-    #      - 1080:1080
-    #  networks: 
-    #    - negonet
-#
-    #webserver:
-    #  build: ./phpdocker/nginx
-    #  container_name: negoapi-webserver
-    #  working_dir: /application
-    #  depends_on:
-    #    - mysql
-    #    - php-fpm
-    #  volumes:
-    #      - ./application:/application
-    #      - ./nginx/logs:/var/log/nginx/
-    #  ports:
-    #   - "9000:80"
-    #   - "9443:443"
-    #  networks:
-    #    - negonet
-#
-    #php-fpm:
-    #  build: phpdocker/php-fpm
-    #  container_name: negoapi-php-fpm
-    #  working_dir: /application
-    #  depends_on: 
-    #    - mysql
-    #  volumes:
-    #    - ./application:/application
-    #    - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.1/fpm/conf.d/99-overrides.ini
-    #  networks: 
-    #    - negonet
+    mailcatcher:
+      image: yappabe/mailcatcher
+      ports:
+          - 1025:1025
+          - 1080:1080
+      networks: 
+        - negonet
+
+    webserver:
+      build: ./phpdocker/nginx
+      container_name: negoapi-webserver
+      working_dir: /application
+      depends_on:
+        - mysql
+        - php-fpm
+      volumes:
+          - /Volumes/Data/Projects/NegoServicios/api:/application
+          - ./nginx/logs:/var/log/nginx/
+      ports:
+       - "9000:80"
+       - "9443:443"
+      networks:
+        - negonet
+
+    php-fpm:
+      build: phpdocker/php-fpm
+      container_name: negoapi-php-fpm
+      working_dir: /application
+      depends_on: 
+        - mysql
+      volumes:
+        - /Volumes/Data/Projects/NegoServicios/api:/application
+        - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.1/fpm/conf.d/99-overrides.ini
+      networks: 
+        - negonet
 networks: 
   negonet: {}
