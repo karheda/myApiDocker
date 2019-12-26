@@ -14,6 +14,7 @@ RUN apt-get update \
   && pecl install imagick memcached-3.0.3 xdebug \
   && docker-php-ext-enable memcached opcache imagick
 
+# GD Installations
 RUN apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -26,6 +27,16 @@ RUN apt-get install -y \
     && docker-php-ext-install gd \
     && docker-php-ext-enable gd
 
+# XDEBUG Installation
+RUN pecl install xdebug; \
+    docker-php-ext-enable xdebug; \
+    echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini;
+
+
+# Composer scripts
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
 COPY run.sh /root
