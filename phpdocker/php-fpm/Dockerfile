@@ -10,7 +10,7 @@ RUN apt-get update \
   && docker-php-ext-install pdo_mysql mysqli mbstring exif
 
 RUN apt-get update \
-  && apt-get install -y libmemcached-dev zlib1g-dev libpng-dev jpegoptim optipng libmagickwand-dev git \
+  && apt-get install -y libmemcached-dev zlib1g-dev libpng-dev jpegoptim optipng libmagickwand-dev git xvfb libfontconfig wkhtmltopdf \
   && pecl install imagick memcached-3.0.3 xdebug \
   && docker-php-ext-enable memcached opcache imagick
 

@@ -3,7 +3,13 @@
 ###############################################################################
 version: "3"
 services:
-
+    reverseproxy:
+      build: ./phpdocker/reverseproxy
+      ports:
+          - 80:80
+      networks: 
+        - negonet
+      restart: always
     memcached:
       image: memcached:alpine
       container_name: negoapi-memcached
@@ -44,14 +50,14 @@ services:
       container_name: negoapi-webserver
       working_dir: /application
       depends_on:
+        - reverseproxy
         - mysql
         - php-fpm
       volumes:
           - ${API_PATH}:/application
           - ./nginx/logs:/var/log/nginx/
-      ports:
-       - "8081:80"
-       - "8443:443"
+      expose:
+        - 80
       networks:
         - negonet
 
@@ -59,7 +65,8 @@ services:
       build: phpdocker/php-fpm
       container_name: negoapi-php-fpm
       working_dir: /application
-      depends_on: 
+      depends_on:
+        - reverseproxy
         - mysql
       volumes:
         - ${API_PATH}:/application
