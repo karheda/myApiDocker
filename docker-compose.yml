@@ -24,7 +24,7 @@ services:
       container_name: negoapi-mysql
       command: --default-authentication-plugin=mysql_native_password
       volumes:
-        - ./mysql/lib:/var/lib/mysql
+        - ./mysql/lib:/var/lib/mysql:cached
         - ./mysql/mysqldump:/docker-entrypoint-initdb.d
       environment:
         MYSQL_ROOT_PASSWORD: skyw4lk3r
