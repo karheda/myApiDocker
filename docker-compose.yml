@@ -34,7 +34,6 @@ services:
       ports:
         - "9306:3306"
       command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --skip-character-set-client-handshake --default-storage-engine=INNODB --max_allowed_packet=256M --innodb_log_file_size=2GB --transaction-isolation=READ-COMMITTED --binlog_format=row --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
-      restart: on-failure
       networks: 
         - proxy
 
@@ -72,8 +71,9 @@ services:
       volumes:
         - ${API_PATH}:/application:cached
         - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.1/fpm/conf.d/99-overrides.ini
+        # 192.168.100.252
       environment: 
-        - XDEBUG_CONFIG:remote_host=192.168.1.12
+        - XDEBUG_CONFIG:remote_host=192.168.100.252
         - XDEBUG_CONFIG:idekey=PHPSTORM 
         - XDEBUG_CONFIG:remote_port=9000
         - XDEBUG_CONFIG:remote_log=/var/log/apache2/xdebug.log
