@@ -16,6 +16,7 @@ RUN apt-get update \
 
 # GD Installations
 RUN apt-get install -y \
+        wget \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libpng12-dev \
@@ -41,17 +42,20 @@ RUN pecl install xdebug; \
     echo "xdebug.remote_host=192.168.100.101" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     echo "xdebug.max_nesting_level=1500" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini;
 
-
 # Composer scripts
+WORKDIR /usr/local/bin
+
 ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY composer.sh /root
+RUN chmod 755 /root/composer.sh
+RUN /root/composer.sh
+RUN php composer-setup.php
+RUN mv composer.phar /usr/local/bin/composer
+RUN rm composer-setup.php
+
+WORKDIR /usr/local/bin
 
 COPY run.sh /root
 RUN chmod 755 /root/run.sh
-
-WORKDIR /usr/local/bin
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-&& php -r "if (hash_file('sha384', 'composer-setup.php') === '8a6138e2a05a8c28539c9f0fb361159823655d7ad2deecb371b04a83966c61223adc522b0189079e3e9e277cd72b8897') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-&& php composer-setup.php \
-&& php -r "unlink('composer-setup.php');"
 
 CMD ["/root/run.sh"]
