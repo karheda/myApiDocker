@@ -11,8 +11,8 @@ RUN apt-get update \
 
 RUN apt-get update \
   && apt-get install -y libmemcached-dev zlib1g-dev libpng-dev jpegoptim optipng libmagickwand-dev git xvfb libfontconfig wkhtmltopdf \
-  && pecl install imagick memcached-3.0.3 xdebug \
-  && docker-php-ext-enable memcached opcache imagick
+  && pecl install imagick memcached-3.0.3 xdebug-2.6.0 \
+  && docker-php-ext-enable memcached opcache imagick xdebug
 
 # GD Installations
 RUN apt-get install -y \
@@ -27,16 +27,6 @@ RUN apt-get install -y \
           --with-jpeg-dir=/usr/include \
     && docker-php-ext-install gd \
     && docker-php-ext-enable gd
-
-# XDEBUG Installation
-RUN pecl install xdebug; \
-    docker-php-ext-enable xdebug; \
-    echo "error_reporting=E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-    echo "display_startup_errors=On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-    echo "display_errors=On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-    echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-    echo "xdebug.client_port=9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-    echo "xdebug.client_host=192.168.100.101" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini;
 
 # Composer scripts
 WORKDIR /usr/local/bin
